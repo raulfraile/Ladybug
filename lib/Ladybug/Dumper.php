@@ -272,4 +272,38 @@ class Dumper
     {
         $this->options->setOption($key, $value);
     }
+
+    /**
+     * Returns a string showing where the helper was called.
+     *
+     * @param boolean $die
+     *
+     * @return string
+     */
+    public static function getCallLocation($die = false)
+    {
+        $backTraceIndex = 3;
+        $backtrace = debug_backtrace();
+
+        // Check if Ladybug was called from the helpers shortcuts
+        $caller = isset($backtrace[$backTraceIndex]['function']) ? $backtrace[$backTraceIndex]['function'] : '';
+        if (!in_array($caller, array('ld', 'ldd', 'ldr'))) {
+            $backTraceIndex = $backTraceIndex - 2;
+        }
+
+        $location = '<b>'. ($die ? 'Process stopped by ' : ''). 'Ladybug called at:</b>'. PHP_EOL;
+        $location .= isset($backtrace[$backTraceIndex]['file']) ? '&raquo; file     : <b>'.
+        $backtrace[$backTraceIndex]['file'] .'</b>'. PHP_EOL : '';
+
+        $location .= isset($backtrace[$backTraceIndex]['line']) ?     '&raquo; line     : <b>'.
+        $backtrace[$backTraceIndex]['line'] .'</b>'. PHP_EOL : '';
+
+        $location .= isset($backtrace[$backTraceIndex + 1]['class']) ?    '&raquo; class    : <b>'.
+        $backtrace[$backTraceIndex + 1]['class'] .'</b>'. PHP_EOL : '';
+
+        $location .= isset($backtrace[$backTraceIndex + 1]['function']) ? '&raquo; function : <b>'.
+        $backtrace[$backTraceIndex + 1]['function'] .'</b>'. PHP_EOL : '';
+
+        return $location;
+    }
 }
