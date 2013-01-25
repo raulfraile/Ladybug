@@ -166,9 +166,9 @@ class Dumper
             $css = '<style>' . file_get_contents($this->options->getOption('css.path')) . '</style>';
         }
 
-        $call = 'Laydybug called at:'. PHP_EOL;
+        $call = '<span class="call_title">Laydybug called at:</span>'. PHP_EOL;
         foreach (self::getCallLocationInfos() as $key => $val) {
-            $call .= '  &raquo; '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' : '. $val. PHP_EOL;
+            $call .= !empty($val) ? '  &raquo; <span class="call_info">'. str_pad($key, 8, ' ', STR_PAD_RIGHT). '</span> : '. $val. PHP_EOL : '';
         }
 
         $html = '<pre class="ladybug"><ol class="tree">' . $html . '</ol>'. $call. '</pre>';
@@ -190,7 +190,7 @@ class Dumper
 
         $result .= PHP_EOL. 'Laydybug called at:'. PHP_EOL;
         foreach (self::getCallLocationInfos() as $key => $val) {
-            $result .= ' > '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' : '. $val. PHP_EOL;
+            $result .= !empty($val) ? ' > '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' : '. $val. PHP_EOL : '';
         }
 
         $result .= PHP_EOL;
@@ -212,7 +212,7 @@ class Dumper
 
         $result .= PHP_EOL. 'Laydybug called at:'. PHP_EOL;
         foreach (self::getCallLocationInfos() as $key => $val) {
-            $result .= ' | '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' | '. $val. PHP_EOL;
+            $result .= !empty($val) ? ' | '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' | '. $val. PHP_EOL : '';
         }
 
         $result .= PHP_EOL;
