@@ -155,8 +155,7 @@ class Dumper
      */
     private function _renderHTML()
     {
-        $html = '';
-        $css = '';
+        $html = $css = $call = '';
 
         foreach ($this->nodes as $var) {
             $html .= '<li>'.$var->render().'</li>';
@@ -167,7 +166,12 @@ class Dumper
             $css = '<style>' . file_get_contents($this->options->getOption('css.path')) . '</style>';
         }
 
-        $html = '<pre class="ladybug"><ol class="tree">' . $html . '</ol></pre>';
+        $call = 'Laydybug called at:'. PHP_EOL;
+        foreach (self::getCallLocationInfos() as $key => $val) {
+            $call .= '  &raquo; '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' : '. $val. PHP_EOL;
+        }
+
+        $html = '<pre class="ladybug"><ol class="tree">' . $html . '</ol>'. $call. '</pre>';
 
         return $css . $html;
     }
@@ -184,7 +188,12 @@ class Dumper
             $result .= $var->render(null, 'cli');
         }
 
-        $result .= "\n";
+        $result .= PHP_EOL. 'Laydybug called at:'. PHP_EOL;
+        foreach (self::getCallLocationInfos() as $key => $val) {
+            $result .= ' > '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' : '. $val. PHP_EOL;
+        }
+
+        $result .= PHP_EOL;
 
         return $result;
     }
@@ -201,7 +210,12 @@ class Dumper
             $result .= $var->render(null, 'txt');
         }
 
-        $result .= "\n";
+        $result .= PHP_EOL. 'Laydybug called at:'. PHP_EOL;
+        foreach (self::getCallLocationInfos() as $key => $val) {
+            $result .= ' | '. str_pad($key, 8, ' ', STR_PAD_RIGHT). ' | '. $val. PHP_EOL;
+        }
+
+        $result .= PHP_EOL;
 
         return $result;
     }
@@ -274,36 +288,26 @@ class Dumper
     }
 
     /**
-     * Returns a string showing where the helper was called.
+     * Returns call location informations.
      *
-     * @param boolean $die
-     *
-     * @return string
+     * @return array
      */
-    public static function getCallLocation($die = false)
+    public static function getCallLocationInfos()
     {
-        $backTraceIndex = 3;
-        $backtrace = debug_backtrace();
+        $idx = 7;
+        $bt = debug_backtrace();
 
         // Check if Ladybug was called from the helpers shortcuts
-        $caller = isset($backtrace[$backTraceIndex]['function']) ? $backtrace[$backTraceIndex]['function'] : '';
+        $caller = isset($bt[$idx]['function']) ? $bt[$idx]['function'] : '';
         if (!in_array($caller, array('ld', 'ldd', 'ldr'))) {
-            $backTraceIndex = $backTraceIndex - 2;
+            $idx = $idx - 2;
         }
 
-        $location = '<b>'. ($die ? 'Process stopped by ' : ''). 'Ladybug called at:</b>'. PHP_EOL;
-        $location .= isset($backtrace[$backTraceIndex]['file']) ? '&raquo; file     : <b>'.
-        $backtrace[$backTraceIndex]['file'] .'</b>'. PHP_EOL : '';
-
-        $location .= isset($backtrace[$backTraceIndex]['line']) ?     '&raquo; line     : <b>'.
-        $backtrace[$backTraceIndex]['line'] .'</b>'. PHP_EOL : '';
-
-        $location .= isset($backtrace[$backTraceIndex + 1]['class']) ?    '&raquo; class    : <b>'.
-        $backtrace[$backTraceIndex + 1]['class'] .'</b>'. PHP_EOL : '';
-
-        $location .= isset($backtrace[$backTraceIndex + 1]['function']) ? '&raquo; function : <b>'.
-        $backtrace[$backTraceIndex + 1]['function'] .'</b>'. PHP_EOL : '';
-
-        return $location;
+        return array(
+            'file'     => isset($bt[$idx]['file']) ? $bt[$idx]['file'] : '',
+            'line'     => isset($bt[$idx]['line']) ? $bt[$idx]['line'] : '',
+            'class'    => isset($bt[$idx + 1]['class'])    ? $bt[$idx + 1]['class'] : '',
+            'function' => isset($bt[$idx + 1]['function']) ? $bt[$idx + 1]['function'] : ''
+        );
     }
 }
