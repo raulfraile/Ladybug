@@ -2,7 +2,7 @@
 /*
  * Ladybug: Simple and Extensible PHP Dumper
  *
- * Processor / Propel
+ * Processor / Aura
  *
  * (c) Raúl Fraile Beneyto <raulfraile@gmail.com>
  *
@@ -12,14 +12,12 @@
 
 namespace Ladybug\Processor;
 
-class Propel implements ProcessorInterface
+class Aura implements ProcessorInterface
 {
-
-    private $propel_prefix = 'http://api.propelorm.org/1.6.6/';
 
     public function isProcessable($str)
     {
-        return strpos($str, 'Propel') !== false;
+        return strpos($str, 'Aura') !== false;
     }
 
     public function process($str)
@@ -27,13 +25,13 @@ class Propel implements ProcessorInterface
         $matches = array();
         $result = $str;
 
-        if (preg_match_all('/\(Propel[\\\\A-Za-z]+\)/', $str, $matches)) {
+        if (preg_match_all('/\(Aura[\\\\A-Za-z]+\)/', $str, $matches)) {
             $matches = array_unique($matches[0]);
 
             foreach ($matches as $m) {
                 $class = str_replace('(', '',str_replace(')', '', $m));
 
-                $result = str_replace($m, '(<a href="' . $this->propel_prefix . '" class="doc silex" target="_blank" title="'.$class.'"></a>'.$class.')', $result);
+                $result = str_replace($m, '(<a href="#" class="doc aura" target="_blank" title="'.$class.'"></a>'.$class.')', $result);
             }
 
         }
