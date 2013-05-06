@@ -30,7 +30,7 @@ function ladybug_dump_die(/*$var1 [, $var2...$varN]*/)
 {
     $ladybug = \Ladybug\Dumper::getInstance();
     echo call_user_func_array(array($ladybug,'dump'), func_get_args());
-    die();
+    die(1);
 }
 
 function ladybug_dump_return(/*$format $var1 [, $var2...$varN]*/)
