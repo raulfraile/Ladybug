@@ -76,7 +76,7 @@ class SimpleTheme extends AbstractTheme implements HtmlThemeInterface, CliThemeI
     public function getCliTags()
     {
         return array(
-            'tab' => '<f_tab> · </f_tab>'
+            'tab' => '<f_tab> '.chr(250).' </f_tab>'
         );
     }
 
