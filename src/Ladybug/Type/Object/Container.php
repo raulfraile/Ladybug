@@ -391,6 +391,7 @@ class Container extends AbstractType
                     } catch (\ReflectionException $e) {
                         // This happens when the class method uses an undefined type hint
                         $methodParameter->setType('[Undefined Type Hint]');
+                        $class = null;
                     }
 
                     if ($class instanceof \ReflectionClass) {
