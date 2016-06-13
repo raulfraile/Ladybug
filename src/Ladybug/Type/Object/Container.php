@@ -372,10 +372,15 @@ class Container extends AbstractType
 
                 // phpdoc comment
                 if (class_exists('\phpDocumentor\Reflection\DocBlock')) {
-                    $phpdoc = new \phpDocumentor\Reflection\DocBlock($reflectedMethod->getDocComment());
+                    $docComment = $reflectedMethod->getDocComment();
 
-                    $method->setShortDescription($phpdoc->getShortDescription());
-                    $method->setLongDescription($phpdoc->getLongDescription());
+                    if (is_string($docComment)) {
+                        $phpdocFactory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
+                        $phpdoc = $phpdocFactory->create($docComment);
+
+                        $method->setShortDescription($phpdoc->getSummary());
+                        $method->setLongDescription((string) $phpdoc->getDescription());
+                    }
                 }
 
                 // parameters
