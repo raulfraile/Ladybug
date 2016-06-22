@@ -13,7 +13,7 @@ curl -O http://getcomposer.org/composer.phar
 Now, install Ladybug with Composer:
 
 ``` bash
-composer.phar require raulfraile/ladybug
+composer.phar require -dev raulfraile/ladybug
 ```
 
 After running the `require` command, a new directory called 'vendor' will contain the Ladybug code, as well as all
